@@ -5,6 +5,18 @@ harpSpatial_basic_scores <- function(obfield, fcfield) {
     .Call('_harpSpatial_harpSpatial_basic_scores', PACKAGE = 'harpSpatial', obfield, fcfield)
 }
 
+vector_to_bin <- function(indat, threshold) {
+    .Call('_harpSpatial_vector_to_bin', PACKAGE = 'harpSpatial', indat, threshold)
+}
+
+window_sum_from_cumsum_for_ij <- function(indat, rad, indices) {
+    .Call('_harpSpatial_window_sum_from_cumsum_for_ij', PACKAGE = 'harpSpatial', indat, rad, indices)
+}
+
+harpSpatial_point_vs_grid_scores <- function(obfield, indices, fcfield, thresholds, scales, startegy) {
+    .Call('_harpSpatial_harpSpatial_point_vs_grid_scores', PACKAGE = 'harpSpatial', obfield, indices, fcfield, thresholds, scales, startegy)
+}
+
 #' @export
 sal_identify_objects <- function(indat, threshold, maxobj) {
     .Call('_harpSpatial_sal_identify_objects', PACKAGE = 'harpSpatial', indat, threshold, maxobj)
