@@ -69,6 +69,7 @@ DataFrame harpSpatial_point_vs_grid_scores(NumericVector obfield, NumericMatrix 
   int nstrat = startegies.length(); // Number of Strategies
   
   NumericVector sum_fc(no);
+  NumericVector sum_ob(no);
   LogicalVector bin_ob(no);
   NumericMatrix cum_fc(ni, nj);
   NumericMatrix cum_ob(ni, nj);
@@ -157,7 +158,9 @@ DataFrame harpSpatial_point_vs_grid_scores(NumericVector obfield, NumericMatrix 
       int rad = (int) scales[sc];
       
       sum_fc = window_sum_from_cumsum_for_ij(cum_fc, rad, indices);
-     
+      sum_ob = window_sum_from_cumsum_for_ij(cum_ob, rad, indices);
+      
+      
       if (is_multi_event) {
         res_me_a[k] = 0;
         res_me_b[k] = 0;
@@ -207,8 +210,8 @@ DataFrame harpSpatial_point_vs_grid_scores(NumericVector obfield, NumericMatrix 
         for(int iob=0; iob<no;iob++){
           int i = indices(iob,0);
           int j = indices(iob,1);
-          int co = cum_ob(i,j);
-          int cf = cum_fc(i,j);
+          int co = sum_ob(i,j);
+          int cf = sum_fc(i,j);
           res_td_a[k] += co > 0 && cf >= co;  
           res_td_b[k] += co == 0 && cf !=0;
           res_td_c[k] += co > 0 && cf < co;
