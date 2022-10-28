@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 
-#include "windowMean.cpp"
+#include "windowMean.h"
 
 using namespace Rcpp;
 
