@@ -13,8 +13,8 @@ window_sum_from_cumsum_for_ij <- function(indat, rad, indices) {
     .Call('_harpSpatial_window_sum_from_cumsum_for_ij', PACKAGE = 'harpSpatial', indat, rad, indices)
 }
 
-harpSpatial_point_vs_grid_scores <- function(obfield, indices, fcfield, thresholds, scales, startegy) {
-    .Call('_harpSpatial_harpSpatial_point_vs_grid_scores', PACKAGE = 'harpSpatial', obfield, indices, fcfield, thresholds, scales, startegy)
+harpSpatial_point_vs_grid_scores <- function(obfield, indices, fcfield, thresholds, scales, startegies) {
+    .Call('_harpSpatial_harpSpatial_point_vs_grid_scores', PACKAGE = 'harpSpatial', obfield, indices, fcfield, thresholds, scales, startegies)
 }
 
 #' @export

@@ -23,7 +23,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vector_to_bin
-NumericVector vector_to_bin(NumericVector indat, float threshold);
+LogicalVector vector_to_bin(NumericVector indat, float threshold);
 RcppExport SEXP _harpSpatial_vector_to_bin(SEXP indatSEXP, SEXP thresholdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -48,8 +48,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // harpSpatial_point_vs_grid_scores
-DataFrame harpSpatial_point_vs_grid_scores(NumericVector obfield, NumericMatrix indices, NumericMatrix fcfield, NumericVector thresholds, NumericVector scales, int startegy);
-RcppExport SEXP _harpSpatial_harpSpatial_point_vs_grid_scores(SEXP obfieldSEXP, SEXP indicesSEXP, SEXP fcfieldSEXP, SEXP thresholdsSEXP, SEXP scalesSEXP, SEXP startegySEXP) {
+DataFrame harpSpatial_point_vs_grid_scores(NumericVector obfield, NumericMatrix indices, NumericMatrix fcfield, NumericVector thresholds, NumericVector scales, NumericVector startegies);
+RcppExport SEXP _harpSpatial_harpSpatial_point_vs_grid_scores(SEXP obfieldSEXP, SEXP indicesSEXP, SEXP fcfieldSEXP, SEXP thresholdsSEXP, SEXP scalesSEXP, SEXP startegiesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,8 +58,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type fcfield(fcfieldSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type thresholds(thresholdsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type scales(scalesSEXP);
-    Rcpp::traits::input_parameter< int >::type startegy(startegySEXP);
-    rcpp_result_gen = Rcpp::wrap(harpSpatial_point_vs_grid_scores(obfield, indices, fcfield, thresholds, scales, startegy));
+    Rcpp::traits::input_parameter< NumericVector >::type startegies(startegiesSEXP);
+    rcpp_result_gen = Rcpp::wrap(harpSpatial_point_vs_grid_scores(obfield, indices, fcfield, thresholds, scales, startegies));
     return rcpp_result_gen;
 END_RCPP
 }
