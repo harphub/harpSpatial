@@ -80,6 +80,7 @@ verify_spatial <- function(start_date,
                            ob_file_path         = "",
                            ob_file_template     = "",
                            ob_file_format       = "hdf5",
+                           ob_parameter         = NULL, 
                            ob_options           = list(),
                            ob_interp_method     = "closest",
                            ob_accumulation      = "15m",
@@ -149,6 +150,9 @@ verify_spatial <- function(start_date,
   # - maybe even a different field -> need a "modifier"???
   # if (!is.null(ob_param$accum)
   ob_param <- prm
+  if (!is.null (ob_parameter)){
+     ob_param$fullname <- ob_parameter
+  } 
   ob_param$accum <- readr::parse_number(ob_accumulation) * 
                     harpIO:::units_multiplier(ob_accumulation)
   get_ob <- function(obdate) {
@@ -158,9 +162,10 @@ verify_spatial <- function(start_date,
       file_template = ob_file_template,
       parameter     = ob_param
     )
-    do.call(harpIO::read_grid, 
-      c(list(file_name=obfile, file_format=ob_file_format,
-                   parameter = ob_param), ob_options))
+  
+   do.call(harpIO::read_grid, 
+          list(file_name=obfile, file_format=ob_file_format,
+                 parameter = ob_param$fullname, file_format_opts=ob_options))
   }
 
   get_fc <- function(fcdate, lead_time) {
