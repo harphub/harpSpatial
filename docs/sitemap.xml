@@ -1,0 +1,20 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/SAL.html</loc></url>
+<url><loc>/reference/ens_dfss.html</loc></url>
+<url><loc>/reference/hira_scores.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/nbhd_verify.html</loc></url>
+<url><loc>/reference/read_hira_config.html</loc></url>
+<url><loc>/reference/read_spatial_config.html</loc></url>
+<url><loc>/reference/save_hira_verif.html</loc></url>
+<url><loc>/reference/save_spatial_verif.html</loc></url>
+<url><loc>/reference/scores_hira.html</loc></url>
+<url><loc>/reference/scores_hira_basic.html</loc></url>
+<url><loc>/reference/spatial_scores.html</loc></url>
+<url><loc>/reference/verify_hira.html</loc></url>
+<url><loc>/reference/verify_spatial.html</loc></url>
+</urlset>
+
