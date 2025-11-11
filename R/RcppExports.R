@@ -46,6 +46,10 @@ fss_from_fractions <- function(m1, m2) {
     .Call('_harpSpatial_fss_from_fractions', PACKAGE = 'harpSpatial', m1, m2)
 }
 
+frac_coverage <- function(field) {
+    .Call('_harpSpatial_frac_coverage', PACKAGE = 'harpSpatial', field)
+}
+
 cpp_neighborhood_scores <- function(fcfield, obfield, thresholds, scales, comparator = "ge", includeLow = TRUE, includeHigh = TRUE, boundaryCondition = "zero_pad") {
     .Call('_harpSpatial_cpp_neighborhood_scores', PACKAGE = 'harpSpatial', fcfield, obfield, thresholds, scales, comparator, includeLow, includeHigh, boundaryCondition)
 }

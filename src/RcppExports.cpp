@@ -149,6 +149,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// frac_coverage
+double frac_coverage(NumericMatrix field);
+RcppExport SEXP _harpSpatial_frac_coverage(SEXP fieldSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type field(fieldSEXP);
+    rcpp_result_gen = Rcpp::wrap(frac_coverage(field));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_neighborhood_scores
 DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield, NumericVector thresholds, NumericVector scales, String comparator, bool includeLow, bool includeHigh, String boundaryCondition);
 RcppExport SEXP _harpSpatial_cpp_neighborhood_scores(SEXP fcfieldSEXP, SEXP obfieldSEXP, SEXP thresholdsSEXP, SEXP scalesSEXP, SEXP comparatorSEXP, SEXP includeLowSEXP, SEXP includeHighSEXP, SEXP boundaryConditionSEXP) {
@@ -232,6 +243,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_harpSpatial_window_sum_from_cumsum_for_ij", (DL_FUNC) &_harpSpatial_window_sum_from_cumsum_for_ij, 3},
     {"_harpSpatial_windowMean", (DL_FUNC) &_harpSpatial_windowMean, 2},
     {"_harpSpatial_fss_from_fractions", (DL_FUNC) &_harpSpatial_fss_from_fractions, 2},
+    {"_harpSpatial_frac_coverage", (DL_FUNC) &_harpSpatial_frac_coverage, 1},
     {"_harpSpatial_cpp_neighborhood_scores", (DL_FUNC) &_harpSpatial_cpp_neighborhood_scores, 8},
     {"_harpSpatial_cpp_ens_fss", (DL_FUNC) &_harpSpatial_cpp_ens_fss, 7},
     {"_harpSpatial_harpSpatial_neighborhood_scores", (DL_FUNC) &_harpSpatial_harpSpatial_neighborhood_scores, 8},

@@ -62,6 +62,21 @@ double fss_from_fractions(NumericMatrix m1, NumericMatrix m2) {
   return (1. - fss1/fss2) ;
 }
 
+// [[Rcpp::export]]
+double frac_coverage(NumericMatrix field) {
+  int ni = field.nrow(), nj = field.ncol();
+  int n = 0;
+
+  for (int j = 0; j < nj; j++) {
+    for (int i = 1; i < ni; i++) {
+      if (field(i, j) > 0) {
+        n++;
+      }
+    }
+  }
+  return (static_cast<float>(n) / (ni * nj));
+}
+
 
 // [[Rcpp::export]]
 DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield,
@@ -69,7 +84,7 @@ DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield,
                     bool includeLow = true, bool includeHigh = true, String boundaryCondition = "zero_pad") {
   int i, j, k, th, sc;
   double a, b, c, dd ;
-  double fss1, fss2 ;
+  double fss1, fss2, fc_cover, ob_cover;
   int n_thresholds=thresholds.length(), n_scales=scales.length();
   int ni=fcfield.nrow(), nj=fcfield.ncol();
 
@@ -86,6 +101,9 @@ DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield,
   NumericVector res_b(n_thresholds * n_scales);
   NumericVector res_c(n_thresholds * n_scales);
   NumericVector res_d(n_thresholds * n_scales);
+  NumericVector res_fc_cover(n_thresholds * n_scales);
+  NumericVector res_ob_cover(n_thresholds * n_scales);
+
   // NOTE: we calculate several scores together
   //       it would be redundant to calculate the cumulated matrices twice...
   // TODO:
@@ -98,14 +116,19 @@ DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield,
     if (NumericVector::is_na(thresholds[th])) {
       cum_fc = fcfield;
       cum_ob = obfield;
+      fc_cover = frac_coverage(fcfield);
+      ob_cover = frac_coverage(obfield);
     } else {
       cum_fc = harpCore::cpp_cumsum2d(fcfield, NumericVector::create(thresholds[th]), comparator, includeLow, includeHigh);
       cum_ob = harpCore::cpp_cumsum2d(obfield, NumericVector::create(thresholds[th]), comparator, includeLow, includeHigh);
+      fc_cover = cum_fc((ni - 1), (nj - 1)) / (ni * nj);
+      ob_cover = cum_ob((ni - 1), (nj - 1)) / (ni * nj);
     }
     for (sc=0 ; sc < n_scales ; sc++) {
       k = th*n_scales + sc;
       res_thresh(k) = thresholds(th);
       res_size(k) = scales(sc);
+
       // fraction matrices
       frac_fc = harpCore::cpp_nbhd_smooth_cumsum(cum_fc, (int) scales[sc], boundaryCondition);
       frac_ob = harpCore::cpp_nbhd_smooth_cumsum(cum_ob, (int) scales[sc], boundaryCondition);
@@ -133,25 +156,29 @@ DataFrame cpp_neighborhood_scores(NumericMatrix fcfield, NumericMatrix obfield,
 
         } //i
       } //j
-      res_fbs[k]     = fss1;
-      res_fbs_ref[k] = fss2;
-      res_fss[k]     = (fss2 < 1.0E-3) ? 0. : 1. - fss1/fss2 ;
-      res_a[k]       = a / (ni*nj) ;
-      res_b[k]       = b / (ni*nj) ;
-      res_c[k]       = c / (ni*nj) ;
-      res_d[k]       = 1. - res_a[k] - res_b[k] - res_c[k] ;
+      res_fbs[k]      = fss1;
+      res_fbs_ref[k]  = fss2;
+      res_fss[k]      = (fss2 < 1.0E-3) ? 0. : 1. - fss1/fss2 ;
+      res_a[k]        = a / (ni*nj) ;
+      res_b[k]        = b / (ni*nj) ;
+      res_c[k]        = c / (ni*nj) ;
+      res_d[k]        = 1. - res_a[k] - res_b[k] - res_c[k] ;
+      res_fc_cover[k] = fc_cover ;
+      res_ob_cover[k] = ob_cover ;
     } //sc
   } //th
 
-  return Rcpp::DataFrame::create(Named("threshold") = res_thresh,
-                                 Named("scale")     = res_size,
-                                 Named("fbs")       = res_fbs,
-                                 Named("fbs_ref")   = res_fbs_ref,
-                                 Named("fss")       = res_fss,
-                                 Named("hit")       = res_a,
-                                 Named("fa")        = res_b,
-                                 Named("miss")      = res_c,
-                                 Named("cr")        = res_d);
+  return Rcpp::DataFrame::create(Named("threshold")         = res_thresh,
+                                 Named("scale")             = res_size,
+                                 Named("fbs")               = res_fbs,
+                                 Named("fbs_ref")           = res_fbs_ref,
+                                 Named("fss")               = res_fss,
+                                 Named("hit")               = res_a,
+                                 Named("fa")                = res_b,
+                                 Named("miss")              = res_c,
+                                 Named("cr")                = res_d,
+                                 Named("forecast_coverage") = res_fc_cover,
+                                 Named("obs_coverage")      = res_ob_cover);
 }
 
 // [[Rcpp::export]]

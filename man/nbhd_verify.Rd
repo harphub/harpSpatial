@@ -16,6 +16,10 @@ nbhd_verify(
 )
 }
 \arguments{
+\item{obs}{The name of the observations column in the
+\code{"harp_ens_grid_df"}, or if \code{.data} is a \code{geolist}, a
+\code{geofield}.}
+
 \item{threshold}{A numeric vector of thresholds to for which to compute the
 neighbourhood scores. Can also be a character vector with numeric values
 between 0 and 1 preceded by a "q" to denote quantile thresholds.}
@@ -24,10 +28,6 @@ between 0 and 1 preceded by a "q" to denote quantile thresholds.}
 compute the scores.}
 
 \item{.data}{A \code{"harp_ens_grid_df"} data frame or a \code{geolist}.}
-
-\item{obs_col}{The name of the observations column in the
-\code{"harp_ens_grid_df"}, or if \code{.data} is a \code{geolist}, a
-\code{geofield}.}
 }
 \description{
 Neighbourhood verification for ensembles

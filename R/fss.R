@@ -85,7 +85,7 @@ fss_old <- function(obfield,
 #' Neighbourhood verification for ensembles
 #'
 #' @param .data A \code{"harp_ens_grid_df"} data frame or a \code{geolist}.
-#' @param obs_col The name of the observations column in the
+#' @param obs The name of the observations column in the
 #'   \code{"harp_ens_grid_df"}, or if \code{.data} is a \code{geolist}, a
 #'   \code{geofield}.
 #' @param threshold A numeric vector of thresholds to for which to compute the
@@ -116,11 +116,12 @@ nbhd_verify.geofield <- function(
   thresholds <- harpCore::parse_thresholds(threshold)
   if (thresholds[["quantiles"]]) {
     quantile_thresh <- TRUE
-    threshold <- quantile(obs, thresholds[["thresholds"]])
+    threshold <- quantile(obs, thresholds[["thresholds"]], na.rm = TRUE)
     thresholds_df <- tibble::tibble(
-      quantile  = thresholds[["thresholds"]],
-      threshold = threshold
+      quantile  = thresholds[["thresholds"]][!is.na(threshold) & threshold > 0],
+      threshold = threshold[!is.na(threshold) & threshold > 0]
     )
+    threshold <- threshold[!is.na(threshold) & threshold > 0]
   }
 
   result <- cpp_neighborhood_scores(
@@ -135,7 +136,7 @@ nbhd_verify.geofield <- function(
     )
   }
 
-  result
+  summarise_fss(result, "det_fss", harpCore::get_domain(.fcst)[["dx"]])
 
 }
 
@@ -145,25 +146,23 @@ nbhd_verify.harp_det_grid_df <- function(
   include_low = TRUE, include_high = TRUE, ...
 ) {
 
-  dplyr::mutate(
-    dplyr::rowwise(.fcst),
-    dplyr::across(
-      {{obs}},
-      ~list(
-        nbhd_verify(
-          .data[["fcst"]],
-          .x,
-          threshold,
-          radius,
-          comparator,
-          include_low,
-          include_high
-        )
-      ),
-      .names = "nbhd_scores"
-    )
-  ) %>%
-    dplyr::ungroup() %>%
+  obs_col <- rlang::as_name(rlang::enquo(obs))
+
+  .fcst$nbhd_scores <- purrr::map(
+    seq_len(nrow(.fcst)),
+    function(i) nbhd_verify(
+      .fcst[["fcst"]][[i]],
+      .fcst[[obs_col]][[i]],
+      threshold,
+      radius,
+      comparator,
+      include_low,
+      include_high
+    ),
+    .progress = TRUE
+  )
+
+  .fcst %>%
     dplyr::select(-dplyr::all_of(c("fcst")), -{{obs}}) %>%
     tidyr::unnest(dplyr::all_of("nbhd_scores"))
 
@@ -487,6 +486,10 @@ summarise_fss <- function(result, type, dx) {
     fbs_ref = sum(.data[["fbs_ref"]]),
     fss     = mean(.data[["fss"]]),
     count   = dplyr::n(),
+    dplyr::across(
+      dplyr::any_of(c("forecast_coverage", "obs_coverage")),
+      list(mean = mean, sd = sd, min = min, max = max)
+    ),
     .by     = by
   ) %>%
     dplyr::mutate(
